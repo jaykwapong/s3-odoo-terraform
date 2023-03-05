@@ -3,6 +3,9 @@ provider "aws" {
   region  = var.region
 }
 
+
+
+
 resource "aws_customer_gateway" "azure-cgw" {
   bgp_asn    = 65000
   ip_address = "172.83.124.10"
@@ -33,3 +36,35 @@ resource "aws_route_table" "example" {
     Name = "azure-vpn-route-table"
   }
 }
+
+//vpc
+
+
+resource "aws_vpc" "main" {
+  cidr_block = "10.10.0.0/16"
+  tags = {
+    Name = "azure_vpc"
+  }
+}
+
+//subnet
+
+resource "aws_subnet" "private" {
+  count = var.subnet_count
+
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = cidrsubnet(var.cidr_block, 4, count.index * 2 + 1)
+
+  tags = {
+    Name = "private-subnet-${count.index}"
+  }
+}
+
+//virtual gateway
+
+
+//internet gateway
+
+
+//customer gateway
+
